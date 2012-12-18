@@ -3,7 +3,7 @@
 #
 #         FILE:  grepfasta.pl
 #
-#        USAGE:  grepfasta.pl [--inverse] [-p='search pattern'|-f=<file with search patterns>] fasta_file
+#        USAGE:  grepfasta.pl [--inverse|-v] [-p='search pattern'|-f=<file with search patterns>] fasta_file
 #
 #  DESCRIPTION:  Print sequence entry from a fasta file to STDOUT,
 #                IF search string match in the definition (header) line.
@@ -50,7 +50,7 @@ if (@ARGV < 1) {
 else {
     GetOptions('help|?'             => sub { pod2usage(1) },
                'man'                => sub { pod2usage(-exitstatus => 0, -verbose => 2) },
-               'inverse!'           => \$inverse,
+               'v|inverse!'           => \$inverse,
                'p|search-pattern=s' => \$search_pattern,
                'f|search-file=s'    => \$search_file,
                'debug'              => \$DEBUG,
@@ -258,7 +258,7 @@ Supply a search I<file> with search strings.
 
 Put several search strings on separate lines.
 
-=item B<-i, --inverse>
+=item B<-i, --inverse|-v>
 
 Inverse the output, i.e., print all fasta entries except the matching. 
 
@@ -291,11 +291,12 @@ the search is repeated for each fasta header in the file untio EOF.
 
 Examples:
 
-  grepfasta.pl --search-string='ABC 123' file.fasta > out.fasta
+  grepfasta.pl --search-pattern='ABC 123' file.fasta > out.fasta
   grepfasta.pl -p='ABC 123' file.fasta > out.fasta
   grepfasta.pl --search-file=search_file.txt file.fasta > out.fasta
   grepfasta.pl -f=search_file.txt file.fasta > out.fasta
   grepfasta.pl -p='ABC 123' --inverse file.fasta > out.fasta
+  grepfasta.pl -p='ABC 123' -v file.fasta > out.fasta
   grepfasta.pl -p='ABC 123' file.fasta.gz > out.fasta
 
 
