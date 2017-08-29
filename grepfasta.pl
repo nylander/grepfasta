@@ -18,11 +18,11 @@
 # REQUIREMENTS:  Pod::Usage
 #         BUGS:  ---
 #        NOTES:  ---
-#       AUTHOR:  Johan A. A. Nylander (JN), <jnylander @ users.sourceforge.net>
+#       AUTHOR:  Johan A. A. Nylander (JN), <johan.nylander @ nbis.se>
 #      COMPANY:  SU
 #      VERSION:  1.0
 #      CREATED:  03/11/2010 10:34:48 AM CET
-#     REVISION:  12/18/2012 05:04:56 PM
+#     REVISION:  08/29/2017 01:21:58 PM
 #===============================================================================
 
 use warnings;
@@ -214,7 +214,7 @@ __END__
 
 
 #===  POD DOCUMENTATION  =======================================================
-#      VERSION:  03/11/2010 10:18:18 AM CETT
+#      VERSION:  08/29/2017 01:21:44 PM
 #  DESCRIPTION:  Documentation
 #         TODO:  ?
 #===============================================================================
@@ -283,7 +283,7 @@ the header of a FASTA entry, and print the entry to STDOUT if match
 B<--inverse> is used).
 
 The match must be exact (i.e., no regular expressions allowed), and
-the search is repeated for each fasta header in the file untio EOF.
+the search is repeated for each fasta header in the file until EOF.
 
 
 
@@ -314,7 +314,7 @@ Uses Perl modules Getopt::Long and Pod::Usage
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2009, 2010, 2011, 2012 Johan Nylander. All rights reserved.
+Copyright (c) 2009,2010,2011,2012,2013,2014,2015,2016,2017 Johan Nylander. All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
