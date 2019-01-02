@@ -1,35 +1,19 @@
-#!/usr/bin/perl 
+#!/usr/bin/env perl 
+
 #===============================================================================
-#
-#         FILE:  grepfasta.pl
-#
-#        USAGE:  grepfasta.pl [--inverse|-v] [-p='search pattern'|-f=<file with search patterns>] fasta_file
-#
-#  DESCRIPTION:  Print sequence entry from a fasta file to STDOUT,
-#                IF search string match in the definition (header) line.
-#                If the '--inverse' option is used, the program prints
-#                all sequences except the one for which the match is made.
-#                Input search pattern as a search string (--search-pattern),
-#                or if multiple searches are to be made, in a file (--search-file),
-#                with one search phrase per line.
-#                Match must be exact.
-#
-#      OPTIONS:  See grepfasta.pl -man
-# REQUIREMENTS:  Pod::Usage
-#         BUGS:  ---
-#        NOTES:  ---
-#       AUTHOR:  Johan A. A. Nylander (JN), <johan.nylander @ nbis.se>
-#      COMPANY:  SU
-#      VERSION:  1.0
-#      CREATED:  03/11/2010 10:34:48 AM CET
-#     REVISION:  08/29/2017 01:21:58 PM
+#    USAGE:  grepfasta.pl [options] [-p='search pattern'|-f=<file with search patterns>] fasta_file
+#  OPTIONS:  See grepfasta.pl -man
+#   AUTHOR:  Johan A. A. Nylander (JN), <johan.nylander @ nbis.se>
+#  COMPANY:  NRM/NBIS
+#  VERSION:  1.1
+#  CREATED:  03/11/2010 10:34:48 AM CET
+# REVISION:  Wed 02 Jan 2019 02:42:04 PM CET
 #===============================================================================
 
 use warnings;
 use strict;
 use Getopt::Long;
 use Pod::Usage;
-use Data::Dumper;
 
 
 ## Global parameters
@@ -39,7 +23,7 @@ my $inverse         = 0;     # No inverse print by default
 my $search_string   = q{};   # Search string
 my $search_pattern  = q{};   # Search pattern, with or without single quotes
 my $search_file     = q{};   # Search file
-my $max             = q{};   # Max nr of matches to print/delete
+my $max             = -1;    # Max nr of matched seqs to print
 my $DEBUG           = 0;     # No debug
 
 
@@ -50,51 +34,22 @@ if (@ARGV < 1) {
 else {
     GetOptions('help|?'             => sub { pod2usage(1) },
                'man'                => sub { pod2usage(-exitstatus => 0, -verbose => 2) },
-               'v|inverse!'           => \$inverse,
                'p|search-pattern=s' => \$search_pattern,
                'f|search-file=s'    => \$search_file,
+               'v|inverse!'         => \$inverse,
+               'n|max:i'            => \$max,
                'debug'              => \$DEBUG,
-               'n|max=i'            => \$max,
-              );#or pod2usage(2)
+              );
 }
-
-
-
-#===  FUNCTION  ================================================================
-#         NAME:  trim
-#      VERSION:  03/11/2010 10:39:38 AM CET
-#  DESCRIPTION:  trim search string
-#   PARAMETERS:  string
-#      RETURNS:  string
-#         TODO:  ???
-#===============================================================================
-sub trim {
-
-    my ($search_pattern) = @_;
-
-    print STDERR "In function trim(): in >>$search_pattern<<\n" if $DEBUG;
-
-    chomp($search_pattern);
-    if ( ($search_pattern =~ m/^'/) and ($search_pattern =~ m/'$/) ) {
-        $search_pattern =~ s/^'//;
-        $search_pattern =~ s/'$//;
-    }
-
-    print STDERR "In function trim(): return >>$search_pattern<<\n" if $DEBUG;
-
-    return($search_pattern);
-
-} # end of trim
-
 
 
 #===  FUNCTION  ================================================================
 #         NAME:  get_if_match_fasta
-#      VERSION:  12/18/2012 05:04:42 PM
+#      VERSION:  Wed 02 Jan 2019 03:51:51 PM CET
 #  DESCRIPTION:  print from fasta file if search string match
 #   PARAMETERS:  $search_string, $INFILE_file_name
 #      RETURNS:  prints to STDOUT
-#         TODO:  Debug, match correct?, return? 
+#         TODO:  Implement max nr of matched seqs to print
 #===============================================================================
 sub get_if_match_fasta {
 
@@ -117,7 +72,6 @@ sub get_if_match_fasta {
     }
 
     ## Get file name
-    ## check if compressed. Warning, does not handle tar archives (*.tar.gz, *.tar.bz2, *.tgz, etc) 
     if ($INFILE_file_name =~ /\.gz$/) {
         $INFILE_file_name =~ s/(.*\.gz)\s*$/gzip -dc < $1|/;
     }
@@ -141,17 +95,21 @@ sub get_if_match_fasta {
     my $counter = 0;
 
     ## Read the file
+    READFILE:
     while(<INFILE>) {
         my $line = $_;
         if ($line =~ /^>/) {
             if ($found_match) {
+                if ($counter == $max) {
+                    last READFILE;
+                }
                 $found_match = 0;
             }
             $found_separator = 1;
             ## Check header line for match:
             CHECK:
             foreach my $string (@search_strings) {
-                if ($line =~ /\Q$string\E/) {
+                if ($line =~ /$string/) {
                     if ($DEBUG) {
                         warn "\n >>> search_string $string matches (apparently) on $line(hit return to continue)\n" and getc();
                     }
@@ -184,8 +142,6 @@ sub get_if_match_fasta {
 } # end of get_if_match_fasta
 
 
-
-
 #===  FUNCTION  ================================================================
 #         NAME:  "MAIN"
 #      VERSION:  03/11/2010 10:34:07 AM CET
@@ -214,7 +170,7 @@ __END__
 
 
 #===  POD DOCUMENTATION  =======================================================
-#      VERSION:  08/29/2017 01:21:44 PM
+#      VERSION:  Wed 02 Jan 2019 02:48:14 PM CET
 #  DESCRIPTION:  Documentation
 #         TODO:  ?
 #===============================================================================
@@ -225,11 +181,31 @@ __END__
 grepfasta.pl - Get entries from FASTA formatted file based on search in header
 
 
-
 =head1 SYNOPSIS
 
-grepfasta.pl [options] file ...
+grepfasta.pl [options] -p 'pattern' file 
 
+
+=head1 DESCRIPTION
+
+B<grepfasta.pl> will search for the presence of I<string> in
+the header of a FASTA entry, and print the entry to STDOUT if 
+a match is found, or print all entries in the file except the
+match (if B<--inverse> is used).
+
+The search pattern can be a regular expression (Perl), and can
+be supplied on command line, or in a file.
+
+If several patterns are given in the search file, all of them are
+used for matching on all fasta entries.
+
+The search is repeated for each fasta header in the file until EOF,
+unless the B<--max> option is used. The B<--max> option only limits
+the total number of sequences to print, which may be important
+to consider if several search patterns are used in a search file.
+
+The script can read compressed fasta files (.gz, .zip, .Z, .bz2),
+if gzip and/or bunzip2 are available.
 
 
 =head1 OPTIONS
@@ -250,7 +226,7 @@ Supply a search I<string>.
 
 Put separated words (phrases) within single or double quotes (e.g., 'My query').
 
-Match must be exact.
+Search string may be a regular expression (Perl).
 
 =item B<-f, --search-file=>I<file>
 
@@ -262,42 +238,46 @@ Put several search strings on separate lines.
 
 Inverse the output, i.e., print all fasta entries except the matching. 
 
-=item B<-n, --max=>I<integer> [NOT IMPLEMENTED]
+=item B<--max=I<integer>|-n>
 
-Print/delete maximum I<integer> matches. Default is to print all.
+Maximum number of sequences to print. Default: all matches.
 
 =item B<-d, --debug>
 
 Do some debug printing.
 
-
 =back
-
-
-
-=head1 DESCRIPTION
-
-B<grepfasta.pl> will search for the presence of I<string> in
-the header of a FASTA entry, and print the entry to STDOUT if match
-(the default), or print all entries in the file except the match (if
-B<--inverse> is used).
-
-The match must be exact (i.e., no regular expressions allowed), and
-the search is repeated for each fasta header in the file until EOF.
-
 
 
 =head1 USAGE
 
 Examples:
 
-  grepfasta.pl --search-pattern='ABC 123' file.fasta > out.fasta
-  grepfasta.pl -p='ABC 123' file.fasta > out.fasta
-  grepfasta.pl --search-file=search_file.txt file.fasta > out.fasta
-  grepfasta.pl -f=search_file.txt file.fasta > out.fasta
-  grepfasta.pl -p='ABC 123' --inverse file.fasta > out.fasta
-  grepfasta.pl -p='ABC 123' -v file.fasta > out.fasta
-  grepfasta.pl -p='ABC 123' file.fasta.gz > out.fasta
+    grepfasta.pl --search-pattern='ABC 12' data/file.fasta
+    grepfasta.pl -p='ABC 12' data/file.fasta
+
+    grepfasta.pl --search-file=data/search_file.txt data/file.fasta
+    grepfasta.pl -f=data/search_file.txt data/file.fasta
+
+    grepfasta.pl -p='ABC 12' --inverse data/file.fasta
+    grepfasta.pl -p='ABC 12' -v data/file.fasta
+
+    grepfasta.pl -p='ABC 12' data/file.fasta.gz
+
+    grepfasta.pl -p='ABC 3' data/file.fasta
+    grepfasta.pl -p='ABC 3' --max=1 data/file.fasta
+
+    grepfasta.pl -p='ABC 1' data/file.fasta
+    grepfasta.pl -p='1$' data/file.fasta
+    grepfasta.pl -p='\w+\s+\d{2}$' data/file.fasta
+    grepfasta.pl -p='[a-z]+\s+\d{2}$' data/file.fasta
+    grepfasta.pl -p='^>[a-z]+\s+\d{2}$' data/file.fasta
+
+
+=head1 DEPENDENCIES
+
+Uses Perl modules Getopt::Long and Pod::Usage for documentation,
+and gzip/bzip2 for uncompressing.
 
 
 =head1 AUTHOR
@@ -305,16 +285,9 @@ Examples:
 Written by Johan A. A. Nylander
 
 
-
-=head1 DEPENDENCIES
-
-Uses Perl modules Getopt::Long and Pod::Usage
-
-
-
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2009,2010,2011,2012,2013,2014,2015,2016,2017 Johan Nylander. All rights reserved.
+Copyright (c) 2009-2019 Johan Nylander. All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -326,6 +299,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details. 
 http://www.gnu.org/copyleft/gpl.html 
+
+
+=head1  DOWNLOAD
+
+L<https://github.com/nylander/grepfasta>
 
 
 =cut
