@@ -1,4 +1,4 @@
-#!/usr/bin/env perl 
+#!/usr/bin/env perl
 
 #===============================================================================
 #    USAGE:  grepfasta.pl [options] [-p='search pattern'|-f=<file with search patterns>] fasta_file
@@ -7,7 +7,7 @@
 #  COMPANY:  NRM/NBIS
 #  VERSION:  1.1
 #  CREATED:  03/11/2010 10:34:48 AM CET
-# REVISION:  Wed 02 Jan 2019 02:42:04 PM CET
+# REVISION:  Wed 19 jun 2019 13:25:08
 #===============================================================================
 
 use warnings;
@@ -111,7 +111,7 @@ sub get_if_match_fasta {
             foreach my $string (@search_strings) {
                 if ($line =~ /$string/) {
                     if ($DEBUG) {
-                        warn "\n >>> search_string $string matches (apparently) on $line(hit return to continue)\n" and getc();
+                        warn "\n >>> search_string $string matches (apparently) on $line (hit return to continue)\n" and getc();
                     }
                     $found_match = 1;
                     $counter++;
@@ -127,10 +127,10 @@ sub get_if_match_fasta {
         }
         else {
             if ($found_match) {
-                print STDOUT  $line unless $inverse;
+                print STDOUT $line unless $inverse;
             }
             elsif ($inverse) {
-                print STDOUT  $line;
+                print STDOUT $line;
             }
         }
     }
@@ -183,13 +183,13 @@ grepfasta.pl - Get entries from FASTA formatted file based on search in header
 
 =head1 SYNOPSIS
 
-grepfasta.pl [options] -p 'pattern' file 
+grepfasta.pl [options] -p 'pattern' file
 
 
 =head1 DESCRIPTION
 
 B<grepfasta.pl> will search for the presence of I<string> in
-the header of a FASTA entry, and print the entry to STDOUT if 
+the header of a FASTA entry, and print the entry to STDOUT if
 a match is found, or print all entries in the file except the
 match (if B<--inverse> is used).
 
@@ -236,7 +236,7 @@ Put several search strings on separate lines.
 
 =item B<-i, --inverse|-v>
 
-Inverse the output, i.e., print all fasta entries except the matching. 
+Inverse the output, i.e., print all fasta entries except the matching.
 
 =item B<--max=I<integer>|-n>
 
@@ -297,8 +297,8 @@ of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details. 
-http://www.gnu.org/copyleft/gpl.html 
+GNU General Public License for more details.
+http://www.gnu.org/copyleft/gpl.html
 
 
 =head1  DOWNLOAD
