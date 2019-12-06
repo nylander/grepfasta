@@ -25,6 +25,7 @@ my $search_pattern  = q{};   # Search pattern, with or without single quotes
 my $search_file     = q{};   # Search file
 my $max             = -1;    # Max nr of matched seqs to print
 my $DEBUG           = 0;     # No debug
+my $retval          = 1;     # Return value (0 if any matches)
 
 
 ## Handle arguments
@@ -100,6 +101,7 @@ sub get_if_match_fasta {
         my $line = $_;
         if ($line =~ /^>/) {
             if ($found_match) {
+                $retval = 0;
                 if ($counter == $max) {
                     last READFILE;
                 }
@@ -163,7 +165,7 @@ while (my $INFILE_file_name = shift(@ARGV)) {
         exit(1);
     }
 }
-exit(0);
+exit($retval);
 
 
 __END__
