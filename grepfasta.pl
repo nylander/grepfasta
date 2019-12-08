@@ -146,7 +146,7 @@ sub get_if_match_fasta {
 
 #===  FUNCTION  ================================================================
 #         NAME:  "MAIN"
-#      VERSION:  03/11/2010 10:34:07 AM CET
+#      VERSION:  Sun 08 Dec 2019 02:20:32 AM CET
 #  DESCRIPTION:  ???
 #   PARAMETERS:  ???
 #      RETURNS:  ???
