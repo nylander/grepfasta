@@ -3,17 +3,18 @@
 #===============================================================================
 #    USAGE:  grepfasta.pl [options] [-p='search pattern'|-f=<file with search patterns>] fasta_file
 #  OPTIONS:  See grepfasta.pl -man
-#   AUTHOR:  Johan A. A. Nylander (JN), <johan.nylander @ nbis.se>
-#  COMPANY:  NRM/NBIS
+#   AUTHOR:  Johan A. A. Nylander (JN), <johan.nylander @ nrm.se>
+#  COMPANY:  NRM
 #  VERSION:  1.1
 #  CREATED:  03/11/2010 10:34:48 AM CET
-# REVISION:  Wed 19 jun 2019 13:25:08
+# REVISION:  Mon 23 okt 2023 13:22:16
 #===============================================================================
 
 use warnings;
 use strict;
-use Getopt::Long;
 use Pod::Usage;
+use Getopt::Long;
+Getopt::Long::Configure("no_ignore_case", "no_auto_abbrev");
 
 
 ## Global parameters
@@ -26,6 +27,7 @@ my $search_file     = q{};   # Search file
 my $max             = -1;    # Max nr of matched seqs to print
 my $DEBUG           = 0;     # No debug
 my $retval          = 1;     # Return value (0 if any matches)
+my $VERSION         = "1.1"; # Version
 
 
 ## Handle arguments
@@ -33,14 +35,16 @@ if (@ARGV < 1) {
     die "No arguments. Try:\n\n $0 -man\n\n";
 }
 else {
-    GetOptions('help|?'             => sub { pod2usage(1) },
-               'man'                => sub { pod2usage(-exitstatus => 0, -verbose => 2) },
-               'p|search-pattern=s' => \$search_pattern,
-               'f|search-file=s'    => \$search_file,
-               'v|inverse!'         => \$inverse,
-               'n|max:i'            => \$max,
-               'debug'              => \$DEBUG,
-              );
+    GetOptions(
+        'help|?'             => sub { pod2usage(1) },
+        'man'                => sub { pod2usage(-exitstatus => 0, -verbose => 2) },
+        'p|search-pattern=s' => \$search_pattern,
+        'f|search-file=s'    => \$search_file,
+        'v|inverse!'         => \$inverse,
+        'n|max:i'            => \$max,
+        'debug'              => \$DEBUG,
+        'V|version'          => sub { print "$VERSION\n"; exit(0); },
+    );
 }
 
 
@@ -248,6 +252,11 @@ Maximum number of sequences to print. Default: all matches.
 
 Do some debug printing.
 
+=item B<-V, --version>
+
+Print version.
+
+
 =back
 
 
@@ -289,7 +298,7 @@ Written by Johan A. A. Nylander
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2009-2020 Johan Nylander
+Copyright (c) 2009-2023 Johan Nylander
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

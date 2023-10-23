@@ -63,6 +63,10 @@ if gzip and/or bunzip2 are available.
 
     Do some debug printing.
 
+- **-V, --version**
+
+    Print version.
+
 # USAGE
 
 Examples:
@@ -98,7 +102,7 @@ Written by Johan A. A. Nylander
 
 # LICENSE AND COPYRIGHT
 
-Copyright (c) 2009-2020 Johan Nylander
+Copyright (c) 2009-2023 Johan Nylander
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -121,3 +125,4 @@ SOFTWARE.
 # DOWNLOAD
 
 [https://github.com/nylander/grepfasta](https://github.com/nylander/grepfasta)
+
