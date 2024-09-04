@@ -1,14 +1,14 @@
 #!/usr/bin/env perl
 
-#===============================================================================
+#==================================================================================================
 #    USAGE:  grepfasta.pl [options] [-p='search pattern'|-f=<file with search patterns>] fasta_file
 #  OPTIONS:  See grepfasta.pl -man
 #   AUTHOR:  Johan A. A. Nylander (JN), <johan.nylander @ nrm.se>
 #  COMPANY:  NRM
-#  VERSION:  1.1
+#  VERSION:  1.1.1
 #  CREATED:  03/11/2010 10:34:48 AM CET
 # REVISION:  ons  4 sep 2024 13:02:41
-#===============================================================================
+#==================================================================================================
 
 use warnings;
 use strict;
@@ -20,14 +20,14 @@ Getopt::Long::Configure("no_ignore_case", "no_auto_abbrev");
 ## Global parameters
 my $man             = 0;
 my $help            = 0;
-my $inverse         = 0;     # No inverse print by default
-my $search_string   = q{};   # Search string
-my $search_pattern  = q{};   # Search pattern, with or without single quotes
-my $search_file     = q{};   # Search file
-my $max             = -1;    # Max nr of matched seqs to print
-my $DEBUG           = 0;     # No debug
-my $retval          = 1;     # Return value (0 if any matches)
-my $VERSION         = "1.1"; # Version
+my $inverse         = 0;       # No inverse print by default
+my $search_string   = q{};     # Search string
+my $search_pattern  = q{};     # Search pattern, with or without single quotes
+my $search_file     = q{};     # Search file
+my $max             = -1;      # Max nr of matched seqs to print
+my $DEBUG           = 0;       # No debug
+my $retval          = 1;       # Return value (0 if any matches)
+my $VERSION         = "1.1.1"; # Version
 
 
 ## Handle arguments
@@ -50,9 +50,9 @@ else {
 
 #===  FUNCTION  ================================================================
 #         NAME:  get_if_match_fasta
-#      VERSION:  Wed 02 Jan 2019 03:51:51 PM CET
+#      VERSION:  ons  4 sep 2024 13:30:38
 #  DESCRIPTION:  print from fasta file if search string match
-#   PARAMETERS:  $search_string, $INFILE_file_name
+#   PARAMETERS:  $search_string, $INFILE_file_name, $file_or_string
 #      RETURNS:  prints to STDOUT
 #         TODO:  Implement max nr of matched seqs to print
 #===============================================================================
@@ -62,15 +62,14 @@ sub get_if_match_fasta {
 
     my @search_strings = ();
 
-    if ( -e $search ) { # is $search a file?
-        ## Search file
-        open my $SF, "<", $search or die "could not open file $search : $! \n";
-        while(<$SF>) {
-            chomp($_);
-            next if /^\s*$/;
-            push(@search_strings, $_);
-        }
-        close($SF);
+    if ($search_file) {
+       open my $SF, "<", $search or die "could not open file $search : $! \n";
+       while(<$SF>) {
+           chomp($_);
+           next if /^\s*$/;
+           push(@search_strings, $_);
+       }
+       close($SF);
     }
     else {
         push(@search_strings, $search);
@@ -112,6 +111,7 @@ sub get_if_match_fasta {
                 $found_match = 0;
             }
             $found_separator = 1;
+
             ## Check header line for match:
             CHECK:
             foreach my $string (@search_strings) {
@@ -150,7 +150,7 @@ sub get_if_match_fasta {
 
 #===  FUNCTION  ================================================================
 #         NAME:  "MAIN"
-#      VERSION:  Sun 08 Dec 2019 02:20:32 AM CET
+#      VERSION:  ons  4 sep 2024 13:41:36
 #  DESCRIPTION:  ???
 #   PARAMETERS:  ???
 #      RETURNS:  ???
@@ -298,7 +298,7 @@ Written by Johan A. A. Nylander
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2009-2023 Johan Nylander
+Copyright (c) 2009-2024 Johan Nylander
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
