@@ -7,7 +7,7 @@
 #  COMPANY:  NRM
 #  VERSION:  1.1
 #  CREATED:  03/11/2010 10:34:48 AM CET
-# REVISION:  Mon 23 okt 2023 13:22:16
+# REVISION:  ons  4 sep 2024 13:02:41
 #===============================================================================
 
 use warnings;
@@ -36,7 +36,7 @@ if (@ARGV < 1) {
 }
 else {
     GetOptions(
-        'help|?'             => sub { pod2usage(1) },
+        'h|help|?'           => sub { pod2usage(1) },
         'man'                => sub { pod2usage(-exitstatus => 0, -verbose => 2) },
         'p|search-pattern=s' => \$search_pattern,
         'f|search-file=s'    => \$search_file,
