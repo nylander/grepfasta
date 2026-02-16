@@ -298,7 +298,7 @@ Written by Johan A. A. Nylander
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2009-2024 Johan Nylander
+Copyright (c) 2009-2026 Johan Nylander
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
